@@ -140,7 +140,7 @@ if submitted:
         "interest_rate": interest_rate
     }
 
-    logo_path = "miller_logo.png"  # Final cleaned version of your logo
+    logo_path = "miller_logo.jpg"  # Final cleaned version of your logo
     pdf_file = generate_letter_pdf(input_data, logo_path)
 
     st.success("✅ Letter created successfully!")
