@@ -31,13 +31,13 @@ def generate_letter_pdf(data, logo_path):
     elements = []
     styles = getSampleStyleSheet()
 
-    # Larger font for better page fill
+    # Style adjustments
     normal_style = ParagraphStyle('Normal', parent=styles['Normal'], fontSize=11, leading=15)
     footer_style = ParagraphStyle('Footer', parent=styles['Normal'], fontSize=9, leading=12)
 
-    # --- Logo (refined proportions and spacing) ---
+    # --- Logo ---
     if os.path.exists(logo_path):
-        logo = Image(logo_path, width=1.8*inch, height=0.7*inch)  # proportionally correct
+        logo = Image(logo_path, width=1.8*inch, height=0.7*inch)
         logo.hAlign = 'LEFT'
         elements.append(Spacer(1, -25))
         elements.append(logo)
@@ -57,12 +57,13 @@ def generate_letter_pdf(data, logo_path):
     elements.append(Paragraph(intro, normal_style))
     elements.append(Spacer(1, 12))
 
+    # Loan info with red, underlined address
     loan_info = f"""
-        Purchase Price:\t${data['purchase_price']:,.0f}<br/>
-        Loan Type:\t{data['loan_type']}<br/>
-        Down Payment:\t{data['down_payment']}%<br/>
-        Interest Rate:\t{data['interest_rate']}%<br/>
-        Property Address:\t{data['property_address']}
+    Purchase Price: ${data['purchase_price']:,.0f}<br/>
+    Loan Type: {data['loan_type']}<br/>
+    Down Payment: {data['down_payment']}%<br/>
+    Interest Rate: {data['interest_rate']}%<br/>
+    Property Address: <font color='red'><u>{data['property_address']}</u></font><br/>
     """
     elements.append(Paragraph(loan_info, normal_style))
     elements.append(Spacer(1, 12))
@@ -83,20 +84,20 @@ def generate_letter_pdf(data, logo_path):
     elements.append(Paragraph(closing, normal_style))
     elements.append(Spacer(1, 18))
 
-    # --- Signature Image ---
+    # --- Signature ---
     if data.get("signature") and os.path.exists(data["signature"]):
         signature_img = Image(data["signature"], width=2.3*inch, height=0.6*inch)
         signature_img.hAlign = 'LEFT'
         elements.append(signature_img)
         elements.append(Spacer(1, 2))
 
-    # Officer info
+    # Loan officer contact block
     elements.append(Paragraph(data['officer_name'], normal_style))
     elements.append(Paragraph(data['officer_title'], normal_style))
     elements.append(Paragraph(f"NMLS#: {data['nmls']}", normal_style))
     elements.append(Paragraph(f"Phone: {data['phone']}", normal_style))
     elements.append(Paragraph(f"Email: {data['email']}", normal_style))
-    elements.append(Spacer(1, 25))  # More space before footer
+    elements.append(Spacer(1, 25))  # More space before disclaimer
 
     # --- Footer Disclaimer ---
     disclaimer = (
@@ -140,7 +141,7 @@ if submitted:
         "interest_rate": interest_rate
     }
 
-    logo_path = "miller_logo.jpg"  # Final cleaned version of your logo
+    logo_path = "miller_logo.jpg"  # or .png, depending on what you're using
     pdf_file = generate_letter_pdf(input_data, logo_path)
 
     st.success("✅ Letter created successfully!")
